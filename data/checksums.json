@@ -1,0 +1,8 @@
+{
+  "deepset_injections/test": "39ac797cabc157eeed58435a08593b2952bb6cb16fc394a2d383f447cc7b246e",
+  "deepset_injections/train": "2e10bc7ab30f542c97e4e83e2a5683000b5057d25ec10908784c631d44124c04",
+  "gretel_pii/test": "014e1057978f030fce4f4cad7c93b9e3377fd0ded713d2bf4c7de00e3e3c8c72",
+  "gretel_pii/train": "89bfe27e37e50098347f47f974e5e43f64a521f38171b618600ea7aa9b4fa430",
+  "jackhhao_jailbreak/test": "a546ce540973d8f5ef87ce3be4bd21ee5923154b9dda86eba5a12c7fa00829da",
+  "lakera_gandalf/test": "56b646d133335ebc535266bd55dbe1b5bee7caa4b95bf49d040684b9b5dd9972"
+}

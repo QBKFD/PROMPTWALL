@@ -14,9 +14,27 @@ def write(tmp_path, body: str) -> Path:
     return p
 
 
+MODEL = REPO / "models" / "injection_tfidf.joblib"
+
+
+@pytest.mark.skipif(not MODEL.exists(), reason="trained model not built (training/train_tfidf.py)")
 def test_shipped_policy_loads():
     policy = load_policy(REPO / "config" / "policy.yaml")
-    assert policy.config.version == 1
+    assert [c.rule.check for c in policy.input_checks] == [
+        "secrets_regex",
+        "pii_regex",
+        "injection_classifier",
+    ]
+    assert [c.rule.check for c in policy.output_checks] == ["pii_regex"]
+
+
+def test_shipped_policy_is_valid_yaml_schema():
+    import yaml
+
+    from firewall.policy import PolicyConfig
+
+    raw = yaml.safe_load((REPO / "config" / "policy.yaml").read_text())
+    PolicyConfig.model_validate(raw)
 
 
 def test_builds_checks_with_params_and_skips_disabled(tmp_path):

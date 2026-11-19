@@ -1,0 +1,37 @@
+# Public datasets used for training and evaluation, pinned to exact Hugging Face commits.
+# Download with: uv run python -m eval.download
+# sha256 values are filled in on first download and verified on every later one.
+datasets:
+  deepset_injections:
+    repo: deepset/prompt-injections
+    revision: 4f61ecb038e9c3fb77e21034b22511b523772cdd
+    license: apache-2.0
+    role: prompt-injection train (train split) and main test (test split)
+    files:
+      train: data/train-00000-of-00001-9564e8b05b4757ab.parquet
+      test: data/test-00000-of-00001-701d16158af87368.parquet
+
+  jackhhao_jailbreak:
+    repo: jackhhao/jailbreak-classification
+    revision: 2f2ceeb39658696fd3f462403562b6eea5306287
+    license: apache-2.0
+    role: out-of-distribution test only (jailbreak vs benign; test split)
+    files:
+      test: default/jailbreak_dataset_test.csv
+
+  lakera_gandalf:
+    repo: Lakera/gandalf_ignore_instructions
+    revision: 04737b65e90a6794ec227012e4a255a7def6344b
+    license: mit
+    role: out-of-distribution test only (injections only -> recall only; test split)
+    files:
+      test: data/test-00000-of-00001-bc92128b9288a6d1.parquet
+
+  gretel_pii:
+    repo: gretelai/synthetic_pii_finance_multilingual
+    revision: 7b844d16738527a04264f50214cb426a4cea0897
+    license: apache-2.0
+    role: PII regex development (train split sample) and test (test split)
+    files:
+      train: data/train-00000-of-00001.parquet
+      test: data/test-00000-of-00001.parquet

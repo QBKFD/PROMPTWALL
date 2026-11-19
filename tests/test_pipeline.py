@@ -131,3 +131,28 @@ def test_mask_spans_merges_overlaps():
         Finding(type="nospan"),
     ]
     assert mask_spans(text, findings) == "01[A]7[C]9"
+
+
+def test_real_rules_end_to_end_with_fake_llm():
+    """The shipped regex checks wired through the pipeline: PII is masked before
+    the LLM sees it, a secret blocks the request, and PII in the answer is masked."""
+    import random
+
+    from eval.synth_secrets import fake_secret
+    from firewall.checks.regex_rules import PIICheck, SecretsCheck
+
+    fw, llm = make_fw(
+        input_checks=[configured(SecretsCheck(), "block"), configured(PIICheck(), "mask")],
+        output_checks=[configured(PIICheck(), "mask")],
+        reply="Sure, I will write to bob@example.org.",
+        stop_on_block=False,
+    )
+    res = fw.handle("My email is jane@example.com and my IBAN is GB82WEST12345698765432")
+    assert llm.calls[-1][1] == "My email is [EMAIL] and my IBAN is [IBAN]"
+    assert res.answer == "Sure, I will write to [EMAIL]."
+    assert res.decision.final_action == Action.MASK
+
+    key = fake_secret(random.Random(1), "aws")
+    res = fw.handle(f"why does {key} not work?")
+    assert res.decision.input_action == Action.BLOCK
+    assert len(llm.calls) == 1  # the blocked request never reached the LLM

@@ -1,0 +1,920 @@
+{
+  "meta": {
+    "generated_utc": "2026-11-19T19:01:26Z",
+    "git_commit": "5ae3181ea961dfeda7b804fb8e046bc7564f1f5e-dirty",
+    "python": "3.12.0",
+    "n_boot": 10000,
+    "datasets": {
+      "deepset_injections": "deepset/prompt-injections@4f61ecb038e9c3fb77e21034b22511b523772cdd",
+      "jackhhao_jailbreak": "jackhhao/jailbreak-classification@2f2ceeb39658696fd3f462403562b6eea5306287",
+      "lakera_gandalf": "Lakera/gandalf_ignore_instructions@04737b65e90a6794ec227012e4a255a7def6344b",
+      "gretel_pii": "gretelai/synthetic_pii_finance_multilingual@7b844d16738527a04264f50214cb426a4cea0897"
+    },
+    "data_checksums_sha256": {
+      "deepset_injections/test": "39ac797cabc157eeed58435a08593b2952bb6cb16fc394a2d383f447cc7b246e",
+      "deepset_injections/train": "2e10bc7ab30f542c97e4e83e2a5683000b5057d25ec10908784c631d44124c04",
+      "gretel_pii/test": "014e1057978f030fce4f4cad7c93b9e3377fd0ded713d2bf4c7de00e3e3c8c72",
+      "gretel_pii/train": "89bfe27e37e50098347f47f974e5e43f64a521f38171b618600ea7aa9b4fa430",
+      "jackhhao_jailbreak/test": "a546ce540973d8f5ef87ce3be4bd21ee5923154b9dda86eba5a12c7fa00829da",
+      "lakera_gandalf/test": "56b646d133335ebc535266bd55dbe1b5bee7caa4b95bf49d040684b9b5dd9972"
+    },
+    "policy_sha256": "8d2ca0494fbb456d389fa926f153186991016257e27330260356a26b8d4e9adc"
+  },
+  "injection_classifier": {
+    "model": {
+      "model": "tfidf_logreg",
+      "selected": {
+        "features": "word+char",
+        "C": 100,
+        "cv_f1_at_0.5": 0.9173
+      },
+      "threshold": 0.45,
+      "cv_f1_at_threshold": 0.9177,
+      "sha256": "7d6e33bce54500b7e6893fb9cb27fabf632f41b38ea15df0a3a9cf67a46c62be"
+    },
+    "deepset_test": {
+      "n": 116,
+      "positives": 60,
+      "negatives": 56,
+      "confusion": {
+        "tp": 53,
+        "fp": 0,
+        "fn": 7,
+        "tn": 56
+      },
+      "false_positives": 0,
+      "false_negatives": 7,
+      "precision": 1.0,
+      "recall": 0.8833,
+      "f1": 0.9381,
+      "fpr": 0.0,
+      "accuracy": 0.9397,
+      "ci95": {
+        "precision": [
+          1.0,
+          1.0
+        ],
+        "recall": [
+          0.7966,
+          0.9545
+        ],
+        "f1": [
+          0.8868,
+          0.9767
+        ],
+        "fpr": [
+          0.0,
+          0.0
+        ],
+        "accuracy": [
+          0.8966,
+          0.9741
+        ]
+      },
+      "wilson95": {
+        "precision": [
+          0.9324,
+          1.0
+        ],
+        "recall": [
+          0.7782,
+          0.9423
+        ],
+        "fpr": [
+          0.0,
+          0.0642
+        ]
+      },
+      "description": "prompt injection vs benign (in-distribution)",
+      "n_original": 116,
+      "dropped_train_duplicates": {
+        "exact": 0,
+        "near_jaccard>=0.9": 0
+      }
+    },
+    "jackhhao_jailbreak_test": {
+      "n": 398,
+      "positives": 139,
+      "negatives": 259,
+      "confusion": {
+        "tp": 139,
+        "fp": 250,
+        "fn": 0,
+        "tn": 9
+      },
+      "false_positives": 250,
+      "false_negatives": 0,
+      "precision": 0.3573,
+      "recall": 1.0,
+      "f1": 0.5265,
+      "fpr": 0.9653,
+      "accuracy": 0.3719,
+      "ci95": {
+        "precision": [
+          0.3112,
+          0.4041
+        ],
+        "recall": [
+          1.0,
+          1.0
+        ],
+        "f1": [
+          0.4747,
+          0.5756
+        ],
+        "fpr": [
+          0.9409,
+          0.9852
+        ],
+        "accuracy": [
+          0.3241,
+          0.4196
+        ]
+      },
+      "wilson95": {
+        "precision": [
+          0.3113,
+          0.4061
+        ],
+        "recall": [
+          0.9731,
+          1.0
+        ],
+        "fpr": [
+          0.9353,
+          0.9816
+        ]
+      },
+      "description": "jailbreak vs benign (out-of-distribution)",
+      "n_original": 400,
+      "dropped_train_duplicates": {
+        "exact": 0,
+        "near_jaccard>=0.9": 2
+      }
+    },
+    "lakera_gandalf_test": {
+      "n": 112,
+      "positives": 112,
+      "negatives": 0,
+      "confusion": {
+        "tp": 110,
+        "fp": 0,
+        "fn": 2,
+        "tn": 0
+      },
+      "false_positives": 0,
+      "false_negatives": 2,
+      "precision": null,
+      "recall": 0.9821,
+      "f1": null,
+      "fpr": null,
+      "accuracy": 0.9821,
+      "ci95": {
+        "precision": null,
+        "recall": [
+          0.9554,
+          1.0
+        ],
+        "f1": null,
+        "fpr": null,
+        "accuracy": [
+          0.9554,
+          1.0
+        ]
+      },
+      "wilson95": {
+        "precision": null,
+        "recall": [
+          0.9372,
+          0.9951
+        ],
+        "fpr": null
+      },
+      "description": "injections only -> recall only (out-of-distribution)",
+      "n_original": 112,
+      "dropped_train_duplicates": {
+        "exact": 0,
+        "near_jaccard>=0.9": 0
+      },
+      "note": "no benign examples: only recall is meaningful"
+    }
+  },
+  "input_rules": {
+    "dataset": "gretel_pii test split, n=5594 documents",
+    "pii_regex": {
+      "email": {
+        "gold_spans": 1422,
+        "pred_spans": 1404,
+        "overlap": {
+          "precision": 0.9679,
+          "recall": 0.9606,
+          "f1": 0.9643,
+          "false_positives": 45,
+          "false_negatives": 56,
+          "ci95": {
+            "precision": [
+              0.9484,
+              0.9846
+            ],
+            "recall": [
+              0.9487,
+              0.9715
+            ],
+            "f1": [
+              0.9529,
+              0.9743
+            ]
+          }
+        },
+        "exact": {
+          "precision": 0.9651,
+          "recall": 0.9529,
+          "f1": 0.959,
+          "false_positives": 49,
+          "false_negatives": 67
+        },
+        "false_positives_overlap_gold_label": {
+          "name": 27,
+          "company": 9,
+          "user_name": 7,
+          "first_name": 2
+        },
+        "document_level": {
+          "n": 5594,
+          "positives": 764,
+          "negatives": 4830,
+          "confusion": {
+            "tp": 717,
+            "fp": 6,
+            "fn": 47,
+            "tn": 4824
+          },
+          "false_positives": 6,
+          "false_negatives": 47,
+          "precision": 0.9917,
+          "recall": 0.9385,
+          "f1": 0.9644,
+          "fpr": 0.0012,
+          "accuracy": 0.9905,
+          "ci95": {
+            "precision": [
+              0.9847,
+              0.9973
+            ],
+            "recall": [
+              0.9204,
+              0.9552
+            ],
+            "f1": [
+              0.9542,
+              0.9736
+            ],
+            "fpr": [
+              0.0004,
+              0.0023
+            ],
+            "accuracy": [
+              0.9878,
+              0.993
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.982,
+              0.9962
+            ],
+            "recall": [
+              0.9192,
+              0.9534
+            ],
+            "fpr": [
+              0.0006,
+              0.0027
+            ]
+          }
+        }
+      },
+      "iban": {
+        "gold_spans": 203,
+        "pred_spans": 155,
+        "overlap": {
+          "precision": 0.9742,
+          "recall": 0.7685,
+          "f1": 0.8592,
+          "false_positives": 4,
+          "false_negatives": 47,
+          "ci95": {
+            "precision": [
+              0.9458,
+              0.9942
+            ],
+            "recall": [
+              0.7004,
+              0.8324
+            ],
+            "f1": [
+              0.8134,
+              0.8997
+            ]
+          }
+        },
+        "exact": {
+          "precision": 0.9742,
+          "recall": 0.7438,
+          "f1": 0.8436,
+          "false_positives": 4,
+          "false_negatives": 52
+        },
+        "false_positives_overlap_gold_label": {
+          "(unlabelled text)": 4
+        },
+        "document_level": {
+          "n": 5594,
+          "positives": 169,
+          "negatives": 5425,
+          "confusion": {
+            "tp": 130,
+            "fp": 4,
+            "fn": 39,
+            "tn": 5421
+          },
+          "false_positives": 4,
+          "false_negatives": 39,
+          "precision": 0.9701,
+          "recall": 0.7692,
+          "f1": 0.8581,
+          "fpr": 0.0007,
+          "accuracy": 0.9923,
+          "ci95": {
+            "precision": [
+              0.9381,
+              0.9931
+            ],
+            "recall": [
+              0.703,
+              0.8323
+            ],
+            "f1": [
+              0.8129,
+              0.8981
+            ],
+            "fpr": [
+              0.0002,
+              0.0015
+            ],
+            "accuracy": [
+              0.99,
+              0.9946
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.9258,
+              0.9883
+            ],
+            "recall": [
+              0.7002,
+              0.8263
+            ],
+            "fpr": [
+              0.0003,
+              0.0019
+            ]
+          }
+        }
+      },
+      "phone": {
+        "gold_spans": 946,
+        "pred_spans": 1276,
+        "overlap": {
+          "precision": 0.6857,
+          "recall": 0.9281,
+          "f1": 0.7887,
+          "false_positives": 401,
+          "false_negatives": 68,
+          "ci95": {
+            "precision": [
+              0.6507,
+              0.7191
+            ],
+            "recall": [
+              0.9105,
+              0.9445
+            ],
+            "f1": [
+              0.7636,
+              0.8119
+            ]
+          }
+        },
+        "exact": {
+          "precision": 0.6818,
+          "recall": 0.9197,
+          "f1": 0.7831,
+          "false_positives": 406,
+          "false_negatives": 76
+        },
+        "false_positives_overlap_gold_label": {
+          "(unlabelled text)": 318,
+          "driver_license_number": 32,
+          "street_address": 22,
+          "date": 15,
+          "credit_card_number": 5,
+          "bank_routing_number": 2,
+          "passport_number": 2,
+          "iban": 2,
+          "ssn": 1,
+          "ipv4": 1,
+          "credit_card_security_code": 1
+        },
+        "document_level": {
+          "n": 5594,
+          "positives": 772,
+          "negatives": 4822,
+          "confusion": {
+            "tp": 715,
+            "fp": 211,
+            "fn": 57,
+            "tn": 4611
+          },
+          "false_positives": 211,
+          "false_negatives": 57,
+          "precision": 0.7721,
+          "recall": 0.9262,
+          "f1": 0.8422,
+          "fpr": 0.0438,
+          "accuracy": 0.9521,
+          "ci95": {
+            "precision": [
+              0.7448,
+              0.8
+            ],
+            "recall": [
+              0.9069,
+              0.944
+            ],
+            "f1": [
+              0.8229,
+              0.8609
+            ],
+            "fpr": [
+              0.0379,
+              0.0496
+            ],
+            "accuracy": [
+              0.9464,
+              0.9578
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.744,
+              0.798
+            ],
+            "recall": [
+              0.9055,
+              0.9426
+            ],
+            "fpr": [
+              0.0383,
+              0.0499
+            ]
+          }
+        }
+      },
+      "any_document_level": {
+        "n": 5594,
+        "positives": 1223,
+        "negatives": 4371,
+        "confusion": {
+          "tp": 1140,
+          "fp": 149,
+          "fn": 83,
+          "tn": 4222
+        },
+        "false_positives": 149,
+        "false_negatives": 83,
+        "precision": 0.8844,
+        "recall": 0.9321,
+        "f1": 0.9076,
+        "fpr": 0.0341,
+        "accuracy": 0.9585,
+        "ci95": {
+          "precision": [
+            0.8669,
+            0.9021
+          ],
+          "recall": [
+            0.9176,
+            0.946
+          ],
+          "f1": [
+            0.8958,
+            0.9195
+          ],
+          "fpr": [
+            0.0287,
+            0.0394
+          ],
+          "accuracy": [
+            0.9533,
+            0.9637
+          ]
+        },
+        "wilson95": {
+          "precision": [
+            0.8658,
+            0.9007
+          ],
+          "recall": [
+            0.9166,
+            0.9449
+          ],
+          "fpr": [
+            0.0291,
+            0.0399
+          ]
+        }
+      },
+      "per_language_overlap": {
+        "Dutch": {
+          "email": {
+            "gold": 87,
+            "precision": 0.9767,
+            "recall": 0.9655,
+            "f1": 0.9711
+          },
+          "iban": {
+            "gold": 20,
+            "precision": 1.0,
+            "recall": 0.8,
+            "f1": 0.8889
+          },
+          "phone": {
+            "gold": 69,
+            "precision": 0.5825,
+            "recall": 0.8696,
+            "f1": 0.6977
+          }
+        },
+        "English": {
+          "email": {
+            "gold": 842,
+            "precision": 0.9691,
+            "recall": 0.9727,
+            "f1": 0.9709
+          },
+          "iban": {
+            "gold": 98,
+            "precision": 0.9892,
+            "recall": 0.9694,
+            "f1": 0.9792
+          },
+          "phone": {
+            "gold": 532,
+            "precision": 0.7263,
+            "recall": 0.9398,
+            "f1": 0.8194
+          }
+        },
+        "France": {
+          "email": {
+            "gold": 115,
+            "precision": 0.916,
+            "recall": 0.9565,
+            "f1": 0.9358
+          },
+          "iban": {
+            "gold": 11,
+            "precision": 1.0,
+            "recall": 0.5455,
+            "f1": 0.7059
+          },
+          "phone": {
+            "gold": 87,
+            "precision": 0.7692,
+            "recall": 0.931,
+            "f1": 0.8424
+          }
+        },
+        "German": {
+          "email": {
+            "gold": 86,
+            "precision": 1.0,
+            "recall": 0.9651,
+            "f1": 0.9822
+          },
+          "iban": {
+            "gold": 26,
+            "precision": 0.8182,
+            "recall": 0.3462,
+            "f1": 0.4865
+          },
+          "phone": {
+            "gold": 49,
+            "precision": 0.5921,
+            "recall": 0.9184,
+            "f1": 0.72
+          }
+        },
+        "Italian": {
+          "email": {
+            "gold": 79,
+            "precision": 0.9157,
+            "recall": 0.962,
+            "f1": 0.9383
+          },
+          "iban": {
+            "gold": 25,
+            "precision": 0.9333,
+            "recall": 0.56,
+            "f1": 0.7
+          },
+          "phone": {
+            "gold": 63,
+            "precision": 0.5816,
+            "recall": 0.9048,
+            "f1": 0.7081
+          }
+        },
+        "Spanish": {
+          "email": {
+            "gold": 91,
+            "precision": 1.0,
+            "recall": 0.9231,
+            "f1": 0.96
+          },
+          "iban": {
+            "gold": 11,
+            "precision": 1.0,
+            "recall": 0.4545,
+            "f1": 0.625
+          },
+          "phone": {
+            "gold": 71,
+            "precision": 0.7442,
+            "recall": 0.9014,
+            "f1": 0.8153
+          }
+        },
+        "Swedish": {
+          "email": {
+            "gold": 122,
+            "precision": 1.0,
+            "recall": 0.9016,
+            "f1": 0.9483
+          },
+          "iban": {
+            "gold": 12,
+            "precision": 1.0,
+            "recall": 0.9167,
+            "f1": 0.9565
+          },
+          "phone": {
+            "gold": 75,
+            "precision": 0.5738,
+            "recall": 0.9467,
+            "f1": 0.7145
+          }
+        }
+      }
+    },
+    "secrets_regex": {
+      "gretel_vs_api_key": {
+        "gold_spans": 90,
+        "pred_spans": 89,
+        "overlap": {
+          "precision": 0.6629,
+          "recall": 0.6556,
+          "f1": 0.6592,
+          "false_positives": 30,
+          "false_negatives": 31,
+          "ci95": {
+            "precision": [
+              0.55,
+              0.7671
+            ],
+            "recall": [
+              0.5385,
+              0.7683
+            ],
+            "f1": [
+              0.5584,
+              0.7474
+            ]
+          }
+        },
+        "exact": {
+          "precision": 0.5843,
+          "recall": 0.5778,
+          "f1": 0.581,
+          "false_positives": 37,
+          "false_negatives": 38
+        },
+        "false_positives_overlap_gold_label": {
+          "password": 21,
+          "(unlabelled text)": 8,
+          "credit_card_security_code": 1
+        },
+        "document_level": {
+          "n": 5594,
+          "positives": 78,
+          "negatives": 5516,
+          "confusion": {
+            "tp": 51,
+            "fp": 28,
+            "fn": 27,
+            "tn": 5488
+          },
+          "false_positives": 28,
+          "false_negatives": 27,
+          "precision": 0.6456,
+          "recall": 0.6538,
+          "f1": 0.6497,
+          "fpr": 0.0051,
+          "accuracy": 0.9902,
+          "ci95": {
+            "precision": [
+              0.5385,
+              0.75
+            ],
+            "recall": [
+              0.5493,
+              0.7586
+            ],
+            "f1": [
+              0.5581,
+              0.7324
+            ],
+            "fpr": [
+              0.0033,
+              0.0071
+            ],
+            "accuracy": [
+              0.9875,
+              0.9927
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.5356,
+              0.742
+            ],
+            "recall": [
+              0.5433,
+              0.7499
+            ],
+            "fpr": [
+              0.0035,
+              0.0073
+            ]
+          }
+        }
+      },
+      "gretel_vs_api_key_or_password": {
+        "gold_spans": 191,
+        "pred_spans": 89,
+        "overlap": {
+          "precision": 0.9101,
+          "recall": 0.4241,
+          "f1": 0.5786,
+          "false_positives": 8,
+          "false_negatives": 110,
+          "ci95": {
+            "precision": [
+              0.8333,
+              0.971
+            ],
+            "recall": [
+              0.3411,
+              0.5112
+            ],
+            "f1": [
+              0.4929,
+              0.6588
+            ]
+          }
+        },
+        "exact": {
+          "precision": 0.809,
+          "recall": 0.377,
+          "f1": 0.5143,
+          "false_positives": 17,
+          "false_negatives": 119
+        },
+        "false_positives_overlap_gold_label": {
+          "(unlabelled text)": 8
+        },
+        "document_level": {
+          "n": 5594,
+          "positives": 170,
+          "negatives": 5424,
+          "confusion": {
+            "tp": 72,
+            "fp": 7,
+            "fn": 98,
+            "tn": 5417
+          },
+          "false_positives": 7,
+          "false_negatives": 98,
+          "precision": 0.9114,
+          "recall": 0.4235,
+          "f1": 0.5783,
+          "fpr": 0.0013,
+          "accuracy": 0.9812,
+          "ci95": {
+            "precision": [
+              0.8415,
+              0.971
+            ],
+            "recall": [
+              0.3497,
+              0.5
+            ],
+            "f1": [
+              0.5023,
+              0.6498
+            ],
+            "fpr": [
+              0.0004,
+              0.0024
+            ],
+            "accuracy": [
+              0.9777,
+              0.9848
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.8282,
+              0.9564
+            ],
+            "recall": [
+              0.3517,
+              0.4987
+            ],
+            "fpr": [
+              0.0006,
+              0.0027
+            ]
+          }
+        }
+      },
+      "synthetic": {
+        "n": 880,
+        "positives": 440,
+        "negatives": 440,
+        "confusion": {
+          "tp": 440,
+          "fp": 0,
+          "fn": 0,
+          "tn": 440
+        },
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "fpr": 0.0,
+        "accuracy": 1.0,
+        "ci95": {
+          "precision": [
+            1.0,
+            1.0
+          ],
+          "recall": [
+            1.0,
+            1.0
+          ],
+          "f1": [
+            1.0,
+            1.0
+          ],
+          "fpr": [
+            0.0,
+            0.0
+          ],
+          "accuracy": [
+            1.0,
+            1.0
+          ]
+        },
+        "wilson95": {
+          "precision": [
+            0.9913,
+            1.0
+          ],
+          "recall": [
+            0.9913,
+            1.0
+          ],
+          "fpr": [
+            0.0,
+            0.0087
+          ]
+        },
+        "note": "self-made by the rules' author: format-coverage sanity check, not a benchmark"
+      }
+    }
+  }
+}
