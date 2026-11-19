@@ -1,6 +1,6 @@
 # Evaluation results
 
-Generated 2026-11-19T19:15:02Z from commit `79110976b64f82f107880d42f584497b084b0fec-dirty`. 95 % CIs: percentile bootstrap, 10000 resamples, seed 0.
+Generated 2026-11-19T19:16:24Z from commit `b14cff931558b6a49d78c2637a7fc13881c90384`. 95 % CIs: percentile bootstrap, 10000 resamples, seed 0.
 
 ## Prompt-injection classifiers
 
