@@ -64,3 +64,12 @@ Made while the author was away and asked for the conservative option at each for
     the conservative option while away, so the switch waits for the author. Switching is
     one line in config/policy.yaml (`check: injection_transformer`). To be transparent:
     this call was made after the test scores were visible.
+
+## 2026-11-19: Author decisions after reviewing stage 2
+
+13. **The service keeps TF-IDF; the transformer remains a documented comparison only.**
+    The author made this choice *after* seeing the test scores (and the informal latency
+    numbers); it is not a pre-registered selection.
+14. **The injection classifier now logs instead of blocking** (`action: log`) because of
+    its out-of-distribution false-positive rate. The secrets rules still block; PII is
+    still masked.

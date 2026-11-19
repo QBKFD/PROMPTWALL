@@ -20,19 +20,19 @@ input:
         entities: [email, iban, phone]
         iban_checksum: true
 
-    # Suspected prompt injection is blocked. The threshold comes from the model's
+    # Suspected prompt injection is logged, not blocked (author decision, see
+    # docs/decisions.md #13): out of distribution the classifier has a very high
+    # false-positive rate (results/results.md). The threshold comes from the model's
     # metadata (chosen by cross-validation on the training split).
-    # Out of distribution this model has a very high false-positive rate (see
-    # results/results.md); consider `action: log` for instruction-style traffic.
     - check: injection_classifier
-      action: block
+      action: log
       on_error: block
       params:
         model_path: models/injection_tfidf.joblib
-    # Alternative (selected by CV, see docs/decisions.md #11-12): needs
+    # Comparison model only (docs/decisions.md #11-13), not used by the service; needs
     # `uv sync --extra transformer` and training/train_transformer.py --final-only.
     # - check: injection_transformer
-    #   action: block
+    #   action: log
     #   on_error: block
     #   params:
     #     model_path: models/injection_transformer
