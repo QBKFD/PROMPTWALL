@@ -50,3 +50,17 @@ Made while the author was away and asked for the conservative option at each for
 10. **Policy action kept at `block` for the classifier** (fail-safe default), with this
     caveat: on instruction-style traffic it would block most benign requests. Switching
     to `log` is a one-line change in config/policy.yaml.
+11. **Transformer result.** distilbert-base-multilingual-cased (fixed hyperparameters,
+    3 epochs, threshold fixed at 0.5) reached CV mean F1 0.965 vs TF-IDF 0.918 on the
+    same folds (+0.047), so under rule 7 it is the **selected model**. On the test sets
+    the gain is not clear: deepset F1 0.957 vs 0.938 (CIs overlap), jackhhao FPR 0.958 vs
+    0.965 (both unusable out of distribution), gandalf recall 0.911 vs 0.982 (lower).
+    The selection was not revisited.
+12. **Shipped policy still runs TF-IDF (deviation from the wording of rule 7).** Rule 7
+    said the transformer "replaces" TF-IDF. Switching the *running service* to it also
+    means a 541 MB model, torch as a runtime dependency (Docker image, CI), and ~23 ms
+    p50 / ~30 ms p95 per message on an M1 CPU vs ~0.6 / 0.9 ms (informal; formal latency
+    is stage 4). Those deployment costs were not part of rule 7, and the author asked for
+    the conservative option while away, so the switch waits for the author. Switching is
+    one line in config/policy.yaml (`check: injection_transformer`). To be transparent:
+    this call was made after the test scores were visible.

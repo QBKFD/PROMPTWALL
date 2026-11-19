@@ -92,12 +92,15 @@ def predict(tok, model, texts) -> np.ndarray:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--final", action="store_true")
+    ap.add_argument("--final-only", action="store_true", help="skip CV, only fit on all of train")
     args = ap.parse_args()
     torch.set_num_threads(8)
 
     data = deepset("train")
     texts = [e.text for e in data]
     y = np.array([e.label for e in data])
+    if args.final_only:
+        return save_final(texts, y)
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)  # same folds as TF-IDF
     probs = np.zeros(len(y))
     fold_f1, t0 = [], time.perf_counter()
@@ -122,11 +125,27 @@ def main() -> None:
     np.save(ROOT / "models" / "transformer_oof_probs.npy", probs)
 
     if args.final:
-        tok, model = fit(texts, [int(v) for v in y])
-        dest = ROOT / "models" / "injection_transformer"
-        model.save_pretrained(dest, safe_serialization=True)
-        tok.save_pretrained(dest)
-        print(f"saved {dest}")
+        save_final(texts, y)
+
+
+def save_final(texts, y) -> None:
+    t0 = time.perf_counter()
+    tok, model = fit(texts, [int(v) for v in y])
+    dest = ROOT / "models" / "injection_transformer"
+    model.save_pretrained(dest, safe_serialization=True)
+    tok.save_pretrained(dest)
+    meta = {
+        "model": "transformer",
+        "base_model": f"{BASE}@{BASE_REV}",
+        "hyperparameters": HP,
+        "train_data": "deepset/prompt-injections@4f61ecb train split",
+        "n_train": len(y),
+        "threshold": 0.5,
+        "threshold_selection": "fixed at 0.5 (not tuned)",
+        "fit_seconds": round(time.perf_counter() - t0, 1),
+    }
+    (dest / "firewall_meta.json").write_text(json.dumps(meta, indent=2) + "\n")
+    print(f"saved {dest}")
 
 
 if __name__ == "__main__":

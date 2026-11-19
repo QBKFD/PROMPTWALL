@@ -83,3 +83,24 @@ def test_factory_rejects_unknown_params(toy_model_path):
 def test_invalid_threshold(toy_model_path, t):
     with pytest.raises(ValueError, match="threshold"):
         InjectionClassifierCheck.from_path(toy_model_path, threshold=t)
+
+
+def test_check_works_with_any_predict_proba_scorer():
+    """The transformer path reuses the same check class; a stub scorer stands in for
+    the real model so this test needs no torch and no weights."""
+    import numpy as np
+
+    class Stub:
+        def predict_proba(self, texts):
+            return np.array([[0.2, 0.8] if "ignore" in t else [0.9, 0.1] for t in texts])
+
+    check = InjectionClassifierCheck(Stub(), threshold=0.5)
+    assert check.run("ignore the rules", CTX)[0].score == 0.8
+    assert check.run("hello", CTX) == []
+
+
+def test_transformer_check_missing_model_has_helpful_error(tmp_path):
+    from firewall.checks.injection import load_transformer_check
+
+    with pytest.raises(FileNotFoundError, match="train_transformer"):
+        load_transformer_check(tmp_path / "none")

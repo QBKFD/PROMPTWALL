@@ -22,11 +22,20 @@ input:
 
     # Suspected prompt injection is blocked. The threshold comes from the model's
     # metadata (chosen by cross-validation on the training split).
+    # Out of distribution this model has a very high false-positive rate (see
+    # results/results.md); consider `action: log` for instruction-style traffic.
     - check: injection_classifier
       action: block
       on_error: block
       params:
         model_path: models/injection_tfidf.joblib
+    # Alternative (selected by CV, see docs/decisions.md #11-12): needs
+    # `uv sync --extra transformer` and training/train_transformer.py --final-only.
+    # - check: injection_transformer
+    #   action: block
+    #   on_error: block
+    #   params:
+    #     model_path: models/injection_transformer
 
 output:
   stop_on_block: true    # skip remaining (possibly paid) output checks once one blocks

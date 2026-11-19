@@ -26,7 +26,11 @@ from eval.datasets import ROOT, deepset, gandalf_test, gretel, jackhhao_test, ov
 from eval.metrics import binary_report
 from eval.span_eval import score_spans
 from firewall.checks.base import CheckContext
-from firewall.checks.injection import DEFAULT_MODEL, InjectionClassifierCheck
+from firewall.checks.injection import (
+    DEFAULT_MODEL,
+    DEFAULT_TRANSFORMER,
+    InjectionClassifierCheck,
+)
 from firewall.checks.regex_rules import PIICheck, SecretsCheck
 from firewall.schemas import Stage
 
@@ -44,43 +48,83 @@ def git_commit() -> str:
         return "unknown"
 
 
-def eval_injection(n_boot: int) -> dict:
-    clf = InjectionClassifierCheck.from_path(ROOT / DEFAULT_MODEL)
+TEST_SETS = {
+    "deepset_test": "prompt injection vs benign (in-distribution)",
+    "jackhhao_jailbreak_test": "jailbreak vs benign (out-of-distribution)",
+    "lakera_gandalf_test": "injections only -> recall only (out-of-distribution)",
+}
+
+
+def _load_test_sets() -> dict:
+    return {
+        "deepset_test": deepset("test"),
+        "jackhhao_jailbreak_test": jackhhao_test(),
+        "lakera_gandalf_test": gandalf_test(),
+    }
+
+
+def _classifiers() -> dict:
+    """The TF-IDF model, and the transformer if it was built (needs the extra)."""
     meta = json.loads((ROOT / DEFAULT_MODEL).with_suffix(".json").read_text())
-    train = deepset("train")
-    sets = {
-        "deepset_test": (deepset("test"), "prompt injection vs benign (in-distribution)"),
-        "jackhhao_jailbreak_test": (jackhhao_test(), "jailbreak vs benign (out-of-distribution)"),
-        "lakera_gandalf_test": (
-            gandalf_test(),
-            "injections only -> recall only (out-of-distribution)",
-        ),
-    }
     out = {
-        "model": {
-            k: meta[k] for k in ("model", "selected", "threshold", "cv_f1_at_threshold", "sha256")
-        }
-    }
-    for name, (data, desc) in sets.items():
-        exact, near = overlap_with(train, data)
-        drop = exact | near
-        kept = [e for i, e in enumerate(data) if i not in drop]
-        scores = clf.score([e.text for e in kept])
-        y_true = [e.label for e in kept]
-        y_pred = [s >= clf.threshold for s in scores]
-        rep = binary_report(y_true, y_pred, n_boot=n_boot)
-        rep.update(
-            description=desc,
-            n_original=len(data),
-            dropped_train_duplicates={"exact": len(exact), "near_jaccard>=0.9": len(near)},
+        "tfidf": (
+            InjectionClassifierCheck.from_path(ROOT / DEFAULT_MODEL),
+            {
+                k: meta[k]
+                for k in ("model", "selected", "threshold", "cv_f1_at_threshold", "sha256")
+            },
         )
-        if rep["negatives"] == 0:
-            for k in ("precision", "fpr", "f1"):
-                rep[k] = None
-                rep["ci95"][k] = None
-            rep["wilson95"]["precision"] = rep["wilson95"]["fpr"] = None
-            rep["note"] = "no benign examples: only recall is meaningful"
-        out[name] = rep
+    }
+    tdir = ROOT / DEFAULT_TRANSFORMER
+    if (tdir / "firewall_meta.json").exists():
+        from firewall.checks.injection import load_transformer_check
+
+        tmeta = json.loads((tdir / "firewall_meta.json").read_text())
+        cv = json.loads((RESULTS / "transformer_cv.json").read_text())
+        tmeta["cv_mean_f1_at_0.5"] = cv["cv_mean_f1_at_0.5"]
+        tmeta["sha256_weights"] = hashlib.sha256(
+            (tdir / "model.safetensors").read_bytes()
+        ).hexdigest()
+        out["transformer"] = (load_transformer_check(tdir), tmeta)
+    return out
+
+
+def eval_injection(n_boot: int) -> dict:
+    train = deepset("train")
+    sets = _load_test_sets()
+    overlaps = {name: overlap_with(train, data) for name, data in sets.items()}
+    out = {"selected": None, "models": {}}
+    for model_name, (clf, meta) in _classifiers().items():
+        res = {"model": meta}
+        for name, data in sets.items():
+            exact, near = overlaps[name]
+            kept = [e for i, e in enumerate(data) if i not in exact | near]
+            scores = clf.score([e.text for e in kept])
+            y_true = [e.label for e in kept]
+            y_pred = [s >= clf.threshold for s in scores]
+            rep = binary_report(y_true, y_pred, n_boot=n_boot)
+            rep.update(
+                description=TEST_SETS[name],
+                n_original=len(data),
+                dropped_train_duplicates={"exact": len(exact), "near_jaccard>=0.9": len(near)},
+            )
+            if rep["negatives"] == 0:
+                for k in ("precision", "fpr", "f1"):
+                    rep[k] = None
+                    rep["ci95"][k] = None
+                rep["wilson95"]["precision"] = rep["wilson95"]["fpr"] = None
+                rep["note"] = "no benign examples: only recall is meaningful"
+            res[name] = rep
+        out["models"][model_name] = res
+    # pre-registered rule (docs/decisions.md #7), decided on CV before test scores
+    tfidf_cv = out["models"]["tfidf"]["model"]["selected"]["cv_f1_at_0.5"]
+    cv_path = RESULTS / "transformer_cv.json"
+    trans_cv = json.loads(cv_path.read_text())["cv_mean_f1_at_0.5"] if cv_path.exists() else None
+    out["cv_f1_at_0.5"] = {"tfidf": tfidf_cv, "transformer": trans_cv}
+    out["selected"] = (
+        "transformer" if trans_cv is not None and trans_cv >= tfidf_cv + 0.03 else "tfidf"
+    )
+    out["selection_rule"] = "transformer if CV mean F1 >= TF-IDF CV F1 + 0.03 (decided on CV only)"
     return out
 
 
@@ -149,34 +193,51 @@ def to_markdown(res: dict) -> str:
              f"`{res['meta']['git_commit']}`. 95 % CIs: percentile bootstrap, "
              f"{res['meta']['n_boot']} resamples, seed 0.\n"]  # fmt: skip
     inj = res["injection_classifier"]
-    m = inj["model"]
     lines += [
-        "## Prompt-injection classifier (TF-IDF + logistic regression)\n",
-        f"Trained on deepset/prompt-injections train (546 rows). Selected by 5-fold CV on train: "
-        f"features={m['selected']['features']}, C={m['selected']['C']}, threshold={m['threshold']} "
-        f"(CV F1 {m['cv_f1_at_threshold']}).\n",
-        "Precision, recall and FPR show Wilson 95 % intervals (informative at zero counts); "
-        "F1 shows the bootstrap 95 % interval.\n",
-        "| Test set | n | Precision | Recall | F1 [95 % CI] | FP | FN | FPR |",
-        "|---|---|---|---|---|---|---|---|",
+        "## Prompt-injection classifiers\n",
+        "Both trained only on deepset/prompt-injections train (546 rows) and selected by "
+        "5-fold CV on train. Selection rule fixed before any test score was computed: "
+        f"{inj['selection_rule']}. Selected: **{inj['selected']}**.\n",
     ]
-    for name in ("deepset_test", "jackhhao_jailbreak_test", "lakera_gandalf_test"):
-        r = inj[name]
-        lines.append(
-            f"| {name} ({r['description']}) | {r['n']} | {fmt(r['precision'])} "
-            f"{ci(r['wilson95']['precision'])} | {fmt(r['recall'])} {ci(r['wilson95']['recall'])} | "
-            f"{fmt(r['f1'])} {ci(r['ci95']['f1'])} | {r['false_positives']} | "
-            f"{r['false_negatives']} | {fmt(r['fpr'])} {ci(r['wilson95']['fpr'])} |"
-        )
-    lines.append("\nConfusion matrices (tp / fp / fn / tn): " + "; ".join(
-        f"{n}: {inj[n]['confusion']['tp']} / {inj[n]['confusion']['fp']} / "
-        f"{inj[n]['confusion']['fn']} / {inj[n]['confusion']['tn']}"
-        for n in ("deepset_test", "jackhhao_jailbreak_test", "lakera_gandalf_test")
-    ))  # fmt: skip
+    for mname, mres in inj["models"].items():
+        m = mres["model"]
+        if mname == "tfidf":
+            lines.append(
+                f"- tfidf: TF-IDF {m['selected']['features']} + logistic regression C={m['selected']['C']}, "
+                f"threshold {m['threshold']} (CV-tuned), CV F1 {m['cv_f1_at_threshold']}"
+            )
+        else:
+            lines.append(
+                f"- transformer: {m['base_model'].split('@')[0]} fine-tuned "
+                f"({m['hyperparameters']['epochs']} epochs, lr {m['hyperparameters']['lr']}), "
+                f"threshold {m['threshold']} (fixed), CV mean F1 {m['cv_mean_f1_at_0.5']}"
+            )
+    lines += [
+        "\nAll test sets side by side. Precision, recall and FPR show Wilson 95 % intervals "
+        "(informative at zero counts); F1 shows the bootstrap 95 % interval.\n",
+        "| Test set | Model | n | Precision | Recall | F1 [95 % CI] | FP | FN | FPR |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for name in TEST_SETS:
+        for mname, mres in inj["models"].items():
+            r = mres[name]
+            lines.append(
+                f"| {name} ({r['description']}) | {mname} | {r['n']} | {fmt(r['precision'])} "
+                f"{ci(r['wilson95']['precision'])} | {fmt(r['recall'])} {ci(r['wilson95']['recall'])} | "
+                f"{fmt(r['f1'])} {ci(r['ci95']['f1'])} | {r['false_positives']} | "
+                f"{r['false_negatives']} | {fmt(r['fpr'])} {ci(r['wilson95']['fpr'])} |"
+            )
+    lines.append("\nConfusion matrices (tp / fp / fn / tn):\n")
+    for mname, mres in inj["models"].items():
+        lines.append(f"- {mname}: " + "; ".join(
+            f"{n}: {mres[n]['confusion']['tp']} / {mres[n]['confusion']['fp']} / "
+            f"{mres[n]['confusion']['fn']} / {mres[n]['confusion']['tn']}"
+            for n in TEST_SETS
+        ))  # fmt: skip
+    first = next(iter(inj["models"].values()))
     lines.append(
         "\nRows removed because they duplicate a train row: " + "; ".join(
-            f"{n}: {inj[n]['dropped_train_duplicates']}"
-            for n in ("deepset_test", "jackhhao_jailbreak_test", "lakera_gandalf_test")
+            f"{n}: {first[n]['dropped_train_duplicates']}" for n in TEST_SETS
         )
     )  # fmt: skip
 

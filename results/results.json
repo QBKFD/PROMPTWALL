@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_utc": "2026-11-19T19:01:26Z",
-    "git_commit": "5ae3181ea961dfeda7b804fb8e046bc7564f1f5e-dirty",
+    "generated_utc": "2026-11-19T19:15:02Z",
+    "git_commit": "79110976b64f82f107880d42f584497b084b0fec-dirty",
     "python": "3.12.0",
     "n_boot": 10000,
     "datasets": {
@@ -21,183 +21,381 @@
     "policy_sha256": "8d2ca0494fbb456d389fa926f153186991016257e27330260356a26b8d4e9adc"
   },
   "injection_classifier": {
-    "model": {
-      "model": "tfidf_logreg",
-      "selected": {
-        "features": "word+char",
-        "C": 100,
-        "cv_f1_at_0.5": 0.9173
+    "selected": "transformer",
+    "models": {
+      "tfidf": {
+        "model": {
+          "model": "tfidf_logreg",
+          "selected": {
+            "features": "word+char",
+            "C": 100,
+            "cv_f1_at_0.5": 0.9173
+          },
+          "threshold": 0.45,
+          "cv_f1_at_threshold": 0.9177,
+          "sha256": "7d6e33bce54500b7e6893fb9cb27fabf632f41b38ea15df0a3a9cf67a46c62be"
+        },
+        "deepset_test": {
+          "n": 116,
+          "positives": 60,
+          "negatives": 56,
+          "confusion": {
+            "tp": 53,
+            "fp": 0,
+            "fn": 7,
+            "tn": 56
+          },
+          "false_positives": 0,
+          "false_negatives": 7,
+          "precision": 1.0,
+          "recall": 0.8833,
+          "f1": 0.9381,
+          "fpr": 0.0,
+          "accuracy": 0.9397,
+          "ci95": {
+            "precision": [
+              1.0,
+              1.0
+            ],
+            "recall": [
+              0.7966,
+              0.9545
+            ],
+            "f1": [
+              0.8868,
+              0.9767
+            ],
+            "fpr": [
+              0.0,
+              0.0
+            ],
+            "accuracy": [
+              0.8966,
+              0.9741
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.9324,
+              1.0
+            ],
+            "recall": [
+              0.7782,
+              0.9423
+            ],
+            "fpr": [
+              0.0,
+              0.0642
+            ]
+          },
+          "description": "prompt injection vs benign (in-distribution)",
+          "n_original": 116,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 0
+          }
+        },
+        "jackhhao_jailbreak_test": {
+          "n": 398,
+          "positives": 139,
+          "negatives": 259,
+          "confusion": {
+            "tp": 139,
+            "fp": 250,
+            "fn": 0,
+            "tn": 9
+          },
+          "false_positives": 250,
+          "false_negatives": 0,
+          "precision": 0.3573,
+          "recall": 1.0,
+          "f1": 0.5265,
+          "fpr": 0.9653,
+          "accuracy": 0.3719,
+          "ci95": {
+            "precision": [
+              0.3112,
+              0.4041
+            ],
+            "recall": [
+              1.0,
+              1.0
+            ],
+            "f1": [
+              0.4747,
+              0.5756
+            ],
+            "fpr": [
+              0.9409,
+              0.9852
+            ],
+            "accuracy": [
+              0.3241,
+              0.4196
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.3113,
+              0.4061
+            ],
+            "recall": [
+              0.9731,
+              1.0
+            ],
+            "fpr": [
+              0.9353,
+              0.9816
+            ]
+          },
+          "description": "jailbreak vs benign (out-of-distribution)",
+          "n_original": 400,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 2
+          }
+        },
+        "lakera_gandalf_test": {
+          "n": 112,
+          "positives": 112,
+          "negatives": 0,
+          "confusion": {
+            "tp": 110,
+            "fp": 0,
+            "fn": 2,
+            "tn": 0
+          },
+          "false_positives": 0,
+          "false_negatives": 2,
+          "precision": null,
+          "recall": 0.9821,
+          "f1": null,
+          "fpr": null,
+          "accuracy": 0.9821,
+          "ci95": {
+            "precision": null,
+            "recall": [
+              0.9554,
+              1.0
+            ],
+            "f1": null,
+            "fpr": null,
+            "accuracy": [
+              0.9554,
+              1.0
+            ]
+          },
+          "wilson95": {
+            "precision": null,
+            "recall": [
+              0.9372,
+              0.9951
+            ],
+            "fpr": null
+          },
+          "description": "injections only -> recall only (out-of-distribution)",
+          "n_original": 112,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 0
+          },
+          "note": "no benign examples: only recall is meaningful"
+        }
       },
-      "threshold": 0.45,
-      "cv_f1_at_threshold": 0.9177,
-      "sha256": "7d6e33bce54500b7e6893fb9cb27fabf632f41b38ea15df0a3a9cf67a46c62be"
-    },
-    "deepset_test": {
-      "n": 116,
-      "positives": 60,
-      "negatives": 56,
-      "confusion": {
-        "tp": 53,
-        "fp": 0,
-        "fn": 7,
-        "tn": 56
-      },
-      "false_positives": 0,
-      "false_negatives": 7,
-      "precision": 1.0,
-      "recall": 0.8833,
-      "f1": 0.9381,
-      "fpr": 0.0,
-      "accuracy": 0.9397,
-      "ci95": {
-        "precision": [
-          1.0,
-          1.0
-        ],
-        "recall": [
-          0.7966,
-          0.9545
-        ],
-        "f1": [
-          0.8868,
-          0.9767
-        ],
-        "fpr": [
-          0.0,
-          0.0
-        ],
-        "accuracy": [
-          0.8966,
-          0.9741
-        ]
-      },
-      "wilson95": {
-        "precision": [
-          0.9324,
-          1.0
-        ],
-        "recall": [
-          0.7782,
-          0.9423
-        ],
-        "fpr": [
-          0.0,
-          0.0642
-        ]
-      },
-      "description": "prompt injection vs benign (in-distribution)",
-      "n_original": 116,
-      "dropped_train_duplicates": {
-        "exact": 0,
-        "near_jaccard>=0.9": 0
+      "transformer": {
+        "model": {
+          "model": "transformer",
+          "base_model": "distilbert/distilbert-base-multilingual-cased@45c032ab32cc946ad88a166f7cb282f58c753c2e",
+          "hyperparameters": {
+            "lr": 3e-05,
+            "epochs": 3,
+            "batch_size": 16,
+            "max_len": 256,
+            "weight_decay": 0.01,
+            "warmup_frac": 0.1,
+            "seed": 0
+          },
+          "train_data": "deepset/prompt-injections@4f61ecb train split",
+          "n_train": 546,
+          "threshold": 0.5,
+          "threshold_selection": "fixed at 0.5 (not tuned)",
+          "fit_seconds": 199.7,
+          "cv_mean_f1_at_0.5": 0.965,
+          "sha256_weights": "d9d5c2be4bbf4b71095f367a4f549128acac1d79341b09f3be49b6a560e4b115"
+        },
+        "deepset_test": {
+          "n": 116,
+          "positives": 60,
+          "negatives": 56,
+          "confusion": {
+            "tp": 55,
+            "fp": 0,
+            "fn": 5,
+            "tn": 56
+          },
+          "false_positives": 0,
+          "false_negatives": 5,
+          "precision": 1.0,
+          "recall": 0.9167,
+          "f1": 0.9565,
+          "fpr": 0.0,
+          "accuracy": 0.9569,
+          "ci95": {
+            "precision": [
+              1.0,
+              1.0
+            ],
+            "recall": [
+              0.8393,
+              0.9821
+            ],
+            "f1": [
+              0.9126,
+              0.991
+            ],
+            "fpr": [
+              0.0,
+              0.0
+            ],
+            "accuracy": [
+              0.9138,
+              0.9914
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.9347,
+              1.0
+            ],
+            "recall": [
+              0.8193,
+              0.9639
+            ],
+            "fpr": [
+              0.0,
+              0.0642
+            ]
+          },
+          "description": "prompt injection vs benign (in-distribution)",
+          "n_original": 116,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 0
+          }
+        },
+        "jackhhao_jailbreak_test": {
+          "n": 398,
+          "positives": 139,
+          "negatives": 259,
+          "confusion": {
+            "tp": 139,
+            "fp": 248,
+            "fn": 0,
+            "tn": 11
+          },
+          "false_positives": 248,
+          "false_negatives": 0,
+          "precision": 0.3592,
+          "recall": 1.0,
+          "f1": 0.5285,
+          "fpr": 0.9575,
+          "accuracy": 0.3769,
+          "ci95": {
+            "precision": [
+              0.3127,
+              0.4072
+            ],
+            "recall": [
+              1.0,
+              1.0
+            ],
+            "f1": [
+              0.4764,
+              0.5788
+            ],
+            "fpr": [
+              0.931,
+              0.9805
+            ],
+            "accuracy": [
+              0.3291,
+              0.4246
+            ]
+          },
+          "wilson95": {
+            "precision": [
+              0.313,
+              0.4081
+            ],
+            "recall": [
+              0.9731,
+              1.0
+            ],
+            "fpr": [
+              0.9256,
+              0.9761
+            ]
+          },
+          "description": "jailbreak vs benign (out-of-distribution)",
+          "n_original": 400,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 2
+          }
+        },
+        "lakera_gandalf_test": {
+          "n": 112,
+          "positives": 112,
+          "negatives": 0,
+          "confusion": {
+            "tp": 102,
+            "fp": 0,
+            "fn": 10,
+            "tn": 0
+          },
+          "false_positives": 0,
+          "false_negatives": 10,
+          "precision": null,
+          "recall": 0.9107,
+          "f1": null,
+          "fpr": null,
+          "accuracy": 0.9107,
+          "ci95": {
+            "precision": null,
+            "recall": [
+              0.8571,
+              0.9554
+            ],
+            "f1": null,
+            "fpr": null,
+            "accuracy": [
+              0.8571,
+              0.9554
+            ]
+          },
+          "wilson95": {
+            "precision": null,
+            "recall": [
+              0.8434,
+              0.9508
+            ],
+            "fpr": null
+          },
+          "description": "injections only -> recall only (out-of-distribution)",
+          "n_original": 112,
+          "dropped_train_duplicates": {
+            "exact": 0,
+            "near_jaccard>=0.9": 0
+          },
+          "note": "no benign examples: only recall is meaningful"
+        }
       }
     },
-    "jackhhao_jailbreak_test": {
-      "n": 398,
-      "positives": 139,
-      "negatives": 259,
-      "confusion": {
-        "tp": 139,
-        "fp": 250,
-        "fn": 0,
-        "tn": 9
-      },
-      "false_positives": 250,
-      "false_negatives": 0,
-      "precision": 0.3573,
-      "recall": 1.0,
-      "f1": 0.5265,
-      "fpr": 0.9653,
-      "accuracy": 0.3719,
-      "ci95": {
-        "precision": [
-          0.3112,
-          0.4041
-        ],
-        "recall": [
-          1.0,
-          1.0
-        ],
-        "f1": [
-          0.4747,
-          0.5756
-        ],
-        "fpr": [
-          0.9409,
-          0.9852
-        ],
-        "accuracy": [
-          0.3241,
-          0.4196
-        ]
-      },
-      "wilson95": {
-        "precision": [
-          0.3113,
-          0.4061
-        ],
-        "recall": [
-          0.9731,
-          1.0
-        ],
-        "fpr": [
-          0.9353,
-          0.9816
-        ]
-      },
-      "description": "jailbreak vs benign (out-of-distribution)",
-      "n_original": 400,
-      "dropped_train_duplicates": {
-        "exact": 0,
-        "near_jaccard>=0.9": 2
-      }
+    "cv_f1_at_0.5": {
+      "tfidf": 0.9173,
+      "transformer": 0.965
     },
-    "lakera_gandalf_test": {
-      "n": 112,
-      "positives": 112,
-      "negatives": 0,
-      "confusion": {
-        "tp": 110,
-        "fp": 0,
-        "fn": 2,
-        "tn": 0
-      },
-      "false_positives": 0,
-      "false_negatives": 2,
-      "precision": null,
-      "recall": 0.9821,
-      "f1": null,
-      "fpr": null,
-      "accuracy": 0.9821,
-      "ci95": {
-        "precision": null,
-        "recall": [
-          0.9554,
-          1.0
-        ],
-        "f1": null,
-        "fpr": null,
-        "accuracy": [
-          0.9554,
-          1.0
-        ]
-      },
-      "wilson95": {
-        "precision": null,
-        "recall": [
-          0.9372,
-          0.9951
-        ],
-        "fpr": null
-      },
-      "description": "injections only -> recall only (out-of-distribution)",
-      "n_original": 112,
-      "dropped_train_duplicates": {
-        "exact": 0,
-        "near_jaccard>=0.9": 0
-      },
-      "note": "no benign examples: only recall is meaningful"
-    }
+    "selection_rule": "transformer if CV mean F1 >= TF-IDF CV F1 + 0.03 (decided on CV only)"
   },
   "input_rules": {
     "dataset": "gretel_pii test split, n=5594 documents",
