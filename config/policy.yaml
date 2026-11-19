@@ -1,0 +1,16 @@
+# Which checks run at each stage, and what happens when one triggers.
+#   action:   block | mask | log   (mask only for checks that report spans)
+#   on_error: block | log          (what to do if the check itself fails; default block)
+# Stage 1 ships the pipeline only; checks are added in stages 2 and 3.
+version: 1
+
+input:
+  stop_on_block: false   # run every input check so the decision record is complete
+  checks: []
+
+output:
+  stop_on_block: true    # skip remaining (possibly paid) output checks once one blocks
+  checks: []
+
+input_block_message: "Your message was blocked by the safety policy."
+output_block_message: "The answer was withheld by the safety policy."
