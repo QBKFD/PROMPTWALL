@@ -3,6 +3,8 @@ name = "prompt-firewall"
 version = "0.1.0"
 description = "LLM safety middleware: input and output checks around an LLM call, with a decision record per request."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "anthropic>=2.10,<3",

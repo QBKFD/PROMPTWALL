@@ -23,6 +23,7 @@ evaluation). The LLM-as-a-judge output check is not built yet. See
 - [Validation methodology](#validation-methodology)
 - [Status and roadmap](#status-and-roadmap)
 - [Datasets and licences](#datasets-and-licences)
+- [Licence](#licence)
 
 ## Architecture
 
@@ -292,3 +293,9 @@ at pinned revisions. `results/` contains metrics only, no dataset text.
 | [Lakera/gandalf_ignore_instructions](https://huggingface.co/datasets/Lakera/gandalf_ignore_instructions) | MIT | Out-of-distribution recall test (test split) |
 | [gretelai/synthetic_pii_finance_multilingual](https://huggingface.co/datasets/gretelai/synthetic_pii_finance_multilingual) | Apache-2.0 | PII rule development (train split sample) and test (test split) |
 | [distilbert/distilbert-base-multilingual-cased](https://huggingface.co/distilbert/distilbert-base-multilingual-cased) | Apache-2.0 | Base model for the DistilBERT comparison |
+
+## Licence
+
+The code in this repository is released under the [MIT License](LICENSE),
+copyright 2026 Jakub Waszczak. The datasets and the DistilBERT base model listed
+above keep their own licences and are not included in the repository.
