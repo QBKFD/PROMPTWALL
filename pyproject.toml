@@ -19,6 +19,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "matplotlib>=3.11,<4",
     "pyarrow>=26,<27",
     "pytest>=9.2,<10",
     "ruff>=0.17,<1",
@@ -59,3 +60,4 @@ known-first-party = ["firewall", "eval", "training"]
 # regex rule tables and markdown table builders read better unwrapped
 "src/firewall/checks/regex_rules.py" = ["E501", "RUF001"]
 "eval/run_eval.py" = ["E501", "RUF001"]
+"eval/make_charts.py" = ["E501"]

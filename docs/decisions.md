@@ -1,6 +1,8 @@
 # Decisions log
 
-Decisions are recorded here *before* the results they could be biased by were seen.
+Each decision is recorded with whether it was made before or after the test-set
+scores it could be biased by were seen. Entries 1-8 were written before any test score
+was computed; later entries say explicitly when they came after.
 
 ## 2026-11-19: Stage 2 (input controls)
 
