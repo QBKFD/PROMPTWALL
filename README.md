@@ -124,7 +124,7 @@ The DistilBERT comparison needs the optional extra:
 ## Results
 
 <!-- BEGIN GENERATED: provenance -->
-Generated from `results/results.json` (2026-11-19T19:16:24Z, code commit `b14cff9`, 10000 bootstrap resamples, seed 0).
+Generated from `results/results.json` (2026-11-24T21:53:31Z, code commit `c438166`, 10000 bootstrap resamples, seed 0).
 <!-- END GENERATED: provenance -->
 
 All test sets below were frozen (pinned revision and SHA-256) and never used for
